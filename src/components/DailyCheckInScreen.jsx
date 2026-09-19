@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { Sparkles, Send, RefreshCw, CheckCircle2, MessageSquareHeart, BookOpen, PenLine, Heart, Search } from 'lucide-react';
+import { Sparkles, Send, RefreshCw, CheckCircle2, MessageSquareHeart, BookOpen, PenLine, Heart, Search, GraduationCap, Compass } from 'lucide-react';
 import { GlassCard, PhasePillBadge, BouncyMoodSelector, SegmentedEnergyBar, GlowButton } from './StitchUI';
 import { generateDailyReflection } from '../services/geminiService';
 import { PHASES } from '../utils/cycleCalculations';
 
-export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, onNavigateToInsights }) {
+export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, onNavigateToInsights, onNavigateToGuide }) {
   const [activeTab, setActiveTab] = useState('checkin'); // 'checkin' | 'diary'
   const [mood, setMood] = useState(4);
   const [energy, setEnergy] = useState(3);
@@ -13,6 +13,7 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
   const [cravingNote, setCravingNote] = useState('');
   const [emotionalBreakdown, setEmotionalBreakdown] = useState(false);
   const [breakdownNote, setBreakdownNote] = useState('');
+  const [examTomorrow, setExamTomorrow] = useState(false);
   const [note, setNote] = useState('');
   const [reflection, setReflection] = useState('');
   const [isLoadingReflection, setIsLoadingReflection] = useState(false);
@@ -61,6 +62,7 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
       cravingNote: cravings ? cravingNote.trim().split(' ')[0] : '',
       emotionalBreakdown: Boolean(emotionalBreakdown),
       breakdownNote: emotionalBreakdown ? breakdownNote.trim().split(' ')[0] : '',
+      examTomorrow: Boolean(examTomorrow),
       note: note.trim() || 'Daily check-in vibes ✨',
       date: `Day ${cycleState.cycleDay} (Today)`,
       timestamp: new Date().toISOString(),
@@ -81,6 +83,7 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
     setBreakdownNote('');
     setCravings(false);
     setEmotionalBreakdown(false);
+    setExamTomorrow(false);
   };
 
   const filteredDiaryLogs = logs.filter((l) => {
@@ -98,6 +101,13 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
     const emojis = { 1: '😫', 2: '🙁', 3: '😐', 4: '🙂', 5: '🤩' };
     return emojis[score] || '🙂';
   };
+
+  // Check if note mentions exclusion keywords
+  const isExclusionKeywordPresent =
+    note.toLowerCase().includes('friend') ||
+    note.toLowerCase().includes('alone') ||
+    note.toLowerCase().includes('exclude') ||
+    note.toLowerCase().includes('left out');
 
   return (
     <div className="max-w-xl mx-auto w-full animate-fadeIn space-y-6 relative">
@@ -188,6 +198,25 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
             </div>
           </div>
 
+          {/* Contextual "Navigate It" Prompt Banner if Low Mood / Exclusion */}
+          {mood <= 2 && isExclusionKeywordPresent && onNavigateToGuide && (
+            <div className="p-4 rounded-2xl bg-indigo-50/95 border-2 border-indigo-200 text-indigo-950 flex items-center justify-between gap-3 shadow-md animate-fadeIn">
+              <div className="flex items-center gap-2.5">
+                <Compass className="w-5 h-5 text-indigo-600 shrink-0" />
+                <div className="text-xs font-bold">
+                  <span>Feeling left out or having friend trouble today?</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={onNavigateToGuide}
+                className="px-3 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-black hover:bg-indigo-700 transition-colors whitespace-nowrap cursor-pointer shadow-xs"
+              >
+                Open Navigate It 🧭
+              </button>
+            </div>
+          )}
+
           {/* Interactive Logging Card */}
           <GlassCard>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -197,7 +226,7 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
               {/* Energy Level 1-5 Segmented Battery */}
               <SegmentedEnergyBar value={energy} onChange={setEnergy} />
 
-              {/* Cravings & Emotional Breakdowns Toggles */}
+              {/* Cravings, Emotional Breakdowns & Student Mode Toggles */}
               <div className="space-y-4 pt-2 border-t border-slate-900/10">
                 <label className="block text-xs font-black uppercase tracking-wider text-slate-700">
                   Quick Vibe Checks 🔍
@@ -206,7 +235,7 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* Cravings Toggle */}
                   <div
-                    className={`p-4 rounded-2xl border-2 transition-all ${
+                    className={`p-3.5 rounded-2xl border-2 transition-all ${
                       cravings
                         ? 'bg-amber-50/90 border-amber-300 shadow-md'
                         : 'bg-white/50 border-white/80'
@@ -218,7 +247,6 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
                         <span className="font-black text-sm text-slate-800">Cravings</span>
                       </div>
 
-                      {/* Yes/No Toggle Pill */}
                       <div className="inline-flex rounded-xl bg-slate-200/80 p-0.5 shadow-inner">
                         <button
                           type="button"
@@ -241,9 +269,8 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
                       </div>
                     </div>
 
-                    {/* Optional 1-word note if Yes */}
                     {cravings && (
-                      <div className="mt-3">
+                      <div className="mt-2.5">
                         <input
                           type="text"
                           placeholder="1-word note (e.g. Chocolate)"
@@ -258,7 +285,7 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
 
                   {/* Emotional Breakdown Toggle */}
                   <div
-                    className={`p-4 rounded-2xl border-2 transition-all ${
+                    className={`p-3.5 rounded-2xl border-2 transition-all ${
                       emotionalBreakdown
                         ? 'bg-purple-50/90 border-purple-300 shadow-md'
                         : 'bg-white/50 border-white/80'
@@ -270,7 +297,6 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
                         <span className="font-black text-sm text-slate-800">Breakdown</span>
                       </div>
 
-                      {/* Yes/No Toggle Pill */}
                       <div className="inline-flex rounded-xl bg-slate-200/80 p-0.5 shadow-inner">
                         <button
                           type="button"
@@ -293,9 +319,8 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
                       </div>
                     </div>
 
-                    {/* Optional 1-word note if Yes */}
                     {emotionalBreakdown && (
-                      <div className="mt-3">
+                      <div className="mt-2.5">
                         <input
                           type="text"
                           placeholder="1-word note (e.g. Overwhelmed)"
@@ -308,6 +333,56 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
                     )}
                   </div>
                 </div>
+
+                {/* Student Mode: Exam / Big Test Tomorrow Toggle */}
+                <div
+                  className={`p-3.5 rounded-2xl border-2 transition-all ${
+                    examTomorrow
+                      ? 'bg-indigo-50/90 border-indigo-300 shadow-md'
+                      : 'bg-white/50 border-white/80'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <GraduationCap className="w-5 h-5 text-indigo-600" />
+                      <div>
+                        <span className="font-black text-sm text-slate-800 block">Exam / Big Test Tomorrow?</span>
+                        <span className="text-[11px] font-semibold text-slate-500">Cycle-aware study guidance</span>
+                      </div>
+                    </div>
+
+                    <div className="inline-flex rounded-xl bg-slate-200/80 p-0.5 shadow-inner">
+                      <button
+                        type="button"
+                        onClick={() => setExamTomorrow(false)}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          !examTomorrow ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'
+                        }`}
+                      >
+                        No
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setExamTomorrow(true)}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          examTomorrow ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-900'
+                        }`}
+                      >
+                        Yes
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Contextual Study Suggestion Based on Reported Energy */}
+                  {examTomorrow && (
+                    <div className="mt-3 p-3 rounded-xl bg-white border border-indigo-200 text-xs font-bold text-indigo-950 animate-fadeIn">
+                      <span className="text-pink-600 font-black block mb-0.5">📚 Study Tip for Today:</span>
+                      {energy <= 2
+                        ? "You reported lower energy today. Prioritize sleep, do short 20-min focused review sessions, and avoid burnout."
+                        : "Great window for focused study! Tackle key concepts now while your logged energy is high."}
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Optional Full Context Note */}
@@ -318,14 +393,14 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
                 <input
                   type="text"
                   value={note}
-                  placeholder="e.g. Listening to new music, cozy movie night..."
+                  placeholder="e.g. Studying for bio, hanging with friends, feeling calm..."
                   maxLength={120}
                   onChange={(e) => setNote(e.target.value)}
                   className="w-full px-4 py-3 rounded-2xl bg-white/90 border-2 border-slate-900/15 focus:border-slate-900 focus:outline-none font-bold text-slate-800 placeholder-slate-400 shadow-sm text-sm"
                 />
               </div>
 
-              {/* Primary CTA: "Log Today's Vibe" */}
+              {/* Primary CTA */}
               <div className="pt-2 flex flex-col sm:flex-row gap-3">
                 <GlowButton
                   type="submit"
@@ -414,8 +489,8 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
                       {entry.note || 'Quiet day.'}
                     </p>
 
-                    {/* Tags for cravings / breakdown */}
-                    {(entry.cravings || entry.emotionalBreakdown) && (
+                    {/* Tags for cravings / breakdown / exam */}
+                    {(entry.cravings || entry.emotionalBreakdown || entry.examTomorrow) && (
                       <div className="flex flex-wrap gap-1.5 pt-1 pl-1">
                         {entry.cravings && (
                           <span className="px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 text-[10px] font-black border border-amber-200">
@@ -425,6 +500,11 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
                         {entry.emotionalBreakdown && (
                           <span className="px-2 py-0.5 rounded-md bg-purple-100 text-purple-900 text-[10px] font-black border border-purple-200">
                             ⛈️ Breakdown: {entry.breakdownNote || 'Yes'}
+                          </span>
+                        )}
+                        {entry.examTomorrow && (
+                          <span className="px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-900 text-[10px] font-black border border-indigo-200">
+                            📚 Exam Prep
                           </span>
                         )}
                       </div>

@@ -7,6 +7,7 @@ import DailyCheckInScreen from './components/DailyCheckInScreen';
 import InsightScreen from './components/InsightScreen';
 import JournalScreen from './components/JournalScreen';
 import EducationHub from './components/EducationHub';
+import NavigateItModule from './components/NavigateItModule';
 import { calculateCycleState, PHASES } from './utils/cycleCalculations';
 
 // Initial seed entries for the standalone Journal
@@ -302,6 +303,14 @@ export default function App() {
             logs={logs}
             onAddLog={handleAddLog}
             onNavigateToInsights={() => setCurrentScreen('insights')}
+            onNavigateToGuide={() => setCurrentScreen('guide')}
+          />
+        )}
+
+        {currentScreen === 'guide' && (
+          <NavigateItModule
+            onOpenJournal={() => setCurrentScreen('journal')}
+            onBack={() => setCurrentScreen('checkin')}
           />
         )}
 

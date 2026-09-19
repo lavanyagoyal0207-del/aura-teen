@@ -158,6 +158,7 @@ export function ScreenNav({ currentScreen, onSelectScreen }) {
     { id: 'welcome', label: 'Aura', icon: Compass, emoji: '✨' },
     { id: 'setup', label: 'Cycle Setup', icon: Calendar, emoji: '🗓️' },
     { id: 'checkin', label: 'Check-In', icon: Heart, emoji: '💫' },
+    { id: 'guide', label: 'Navigate It', icon: Compass, emoji: '🧭' },
     { id: 'journal', label: 'Journal', icon: BookOpen, emoji: '📖' },
     { id: 'insights', label: 'Insights', icon: BarChart2, emoji: '📊' },
     { id: 'education', label: 'Edu Hub', icon: GraduationCap, emoji: '📚' },
@@ -171,7 +172,7 @@ export function ScreenNav({ currentScreen, onSelectScreen }) {
           <button
             key={tab.id}
             onClick={() => onSelectScreen(tab.id)}
-            className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl font-black text-xs sm:text-sm transition-all duration-200 cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl font-black text-xs sm:text-sm transition-all duration-200 cursor-pointer ${
               isActive
                 ? 'bg-slate-900 text-white shadow-md scale-105 ring-2 ring-pink-300'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
