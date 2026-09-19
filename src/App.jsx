@@ -182,13 +182,24 @@ export default function App() {
 
   return (
     <div
-      className={`min-h-screen ${activeAura.bg} transition-all duration-1000 ease-in-out flex flex-col justify-between py-6 px-4 sm:px-6 relative overflow-hidden animate-fadeIn`}
+      className={`min-h-screen ${activeAura.bg} transition-all duration-1000 ease-in-out flex flex-col justify-between py-5 px-4 sm:px-6 relative overflow-hidden animate-fadeIn`}
     >
       {/* Emergency / I Need Help Modal */}
       <EmergencyHelpModal
         isOpen={isHelpModalOpen}
         onClose={() => setIsHelpModalOpen(false)}
       />
+
+      {/* Floating Persistent Emergency Button (Never hidden) */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <button
+          type="button"
+          onClick={() => setIsHelpModalOpen(true)}
+          className="px-4 py-2.5 rounded-full bg-rose-500 hover:bg-rose-600 text-white font-black text-xs sm:text-sm shadow-2xl border-2 border-white/80 transition-all flex items-center gap-2 cursor-pointer transform hover:scale-105 active:scale-95 animate-bounce-subtle"
+        >
+          <span>🆘 I Need Help</span>
+        </button>
+      </div>
 
       {/* Dynamic Animated Ambient Blobs */}
       <div
@@ -201,16 +212,17 @@ export default function App() {
         className={`absolute -bottom-32 left-1/3 w-80 h-80 rounded-full ${activeAura.blob3} filter blur-3xl pointer-events-none animate-pulse-glow transition-all duration-1000`}
       />
 
-      {/* Top App Header & Navigation */}
-      <header className="max-w-4xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-4 mb-4 z-20">
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+      {/* Top App Header & Utility Bar */}
+      <header className="max-w-4xl mx-auto w-full flex flex-col gap-3.5 mb-3 z-30">
+        {/* Row 1: Brand & Top Emergency Button */}
+        <div className="flex items-center justify-between gap-3 w-full">
           <button
             type="button"
             onClick={() => setCurrentScreen('welcome')}
             title="Return to Welcome Landing"
             className="flex items-center gap-3 cursor-pointer group text-left"
           >
-            <div className="w-12 h-12 rounded-2xl bg-white/80 backdrop-blur-md shadow-md flex items-center justify-center text-2xl border-2 border-white/90 transform group-hover:scale-110 group-hover:rotate-6 transition-all sticker-badge">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/80 backdrop-blur-md shadow-md flex items-center justify-center text-2xl border-2 border-white/90 transform group-hover:scale-110 group-hover:rotate-6 transition-all sticker-badge">
               {cycleState.phase.emoji}
             </div>
             <div>
@@ -218,7 +230,7 @@ export default function App() {
                 <span className="font-black text-2xl sm:text-3xl text-slate-900 tracking-tight">
                   Aura Teen
                 </span>
-                <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white tracking-wide shadow-sm">
+                <span className="text-[10px] sm:text-[11px] font-black px-2 sm:px-2.5 py-0.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white tracking-wide shadow-sm">
                   AESTHETIC ✨
                 </span>
               </div>
@@ -232,79 +244,82 @@ export default function App() {
             </div>
           </button>
 
-          {/* Emergency "I Need Help" Button */}
+          {/* Top Quick Emergency Button */}
           <button
             type="button"
             onClick={() => setIsHelpModalOpen(true)}
-            className="px-3 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-black text-xs shadow-md border border-rose-300 transition-all flex items-center gap-1.5 cursor-pointer transform hover:scale-105 active:scale-95 shrink-0"
+            className="px-3.5 py-2 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-black text-xs shadow-md border-2 border-rose-300 transition-all flex items-center gap-1.5 cursor-pointer transform hover:scale-105 active:scale-95 shrink-0"
           >
             <span>🆘 I Need Help</span>
           </button>
         </div>
 
-        {/* Screen Switcher */}
-        <ScreenNav
-          currentScreen={currentScreen}
-          onSelectScreen={(screen) => setCurrentScreen(screen)}
-        />
-      </header>
-
-      {/* Quick Phase Live Preview Bar */}
-      <div className="max-w-4xl mx-auto w-full flex items-center justify-center gap-2 pb-2 z-20">
-        <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 hidden sm:inline">
-          Aura Shift Preview:
-        </span>
-        <div className="inline-flex gap-1.5 p-1 rounded-2xl bg-white/70 backdrop-blur-md border border-white/80 shadow-xs">
-          <button
-            type="button"
-            onClick={() => setSimulatedPhaseOffset(2)}
-            title="Rest Aura (Velvet Rose)"
-            className={`px-2.5 py-1 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
-              cycleState.phase.id === 'menstrual'
-                ? 'bg-rose-500 text-white shadow-sm'
-                : 'hover:bg-rose-100 text-slate-600'
-            }`}
-          >
-            🌸 Menstrual
-          </button>
-          <button
-            type="button"
-            onClick={() => setSimulatedPhaseOffset(8)}
-            title="Energy Aura (Peach Sunset)"
-            className={`px-2.5 py-1 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
-              cycleState.phase.id === 'follicular'
-                ? 'bg-orange-500 text-white shadow-sm'
-                : 'hover:bg-orange-100 text-slate-600'
-            }`}
-          >
-            🌱 Follicular
-          </button>
-          <button
-            type="button"
-            onClick={() => setSimulatedPhaseOffset(15)}
-            title="Glow Aura (Mint & Emerald)"
-            className={`px-2.5 py-1 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
-              cycleState.phase.id === 'ovulation'
-                ? 'bg-emerald-500 text-white shadow-sm'
-                : 'hover:bg-emerald-100 text-slate-600'
-            }`}
-          >
-            ✨ Ovulation
-          </button>
-          <button
-            type="button"
-            onClick={() => setSimulatedPhaseOffset(22)}
-            title="Reflection Aura (Cosmic Violet)"
-            className={`px-2.5 py-1 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
-              cycleState.phase.id === 'luteal'
-                ? 'bg-purple-600 text-white shadow-sm'
-                : 'hover:bg-purple-100 text-slate-600'
-            }`}
-          >
-            🌙 Luteal
-          </button>
+        {/* Row 2: Main Navigation Bar with Integrated I Need Help Action */}
+        <div className="w-full flex justify-center">
+          <ScreenNav
+            currentScreen={currentScreen}
+            onSelectScreen={(screen) => setCurrentScreen(screen)}
+            onOpenHelp={() => setIsHelpModalOpen(true)}
+          />
         </div>
-      </div>
+
+        {/* Row 3: Quick Phase Live Preview Bar */}
+        <div className="w-full flex items-center justify-center gap-2 pt-1">
+          <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 hidden sm:inline">
+            Aura Shift Preview:
+          </span>
+          <div className="inline-flex flex-wrap justify-center gap-1.5 p-1 rounded-2xl bg-white/70 backdrop-blur-md border border-white/80 shadow-xs">
+            <button
+              type="button"
+              onClick={() => setSimulatedPhaseOffset(2)}
+              title="Rest Aura (Velvet Rose)"
+              className={`px-2.5 py-1 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
+                cycleState.phase.id === 'menstrual'
+                  ? 'bg-rose-500 text-white shadow-sm'
+                  : 'hover:bg-rose-100 text-slate-600'
+              }`}
+            >
+              🌸 Menstrual
+            </button>
+            <button
+              type="button"
+              onClick={() => setSimulatedPhaseOffset(8)}
+              title="Energy Aura (Peach Sunset)"
+              className={`px-2.5 py-1 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
+                cycleState.phase.id === 'follicular'
+                  ? 'bg-orange-500 text-white shadow-sm'
+                  : 'hover:bg-orange-100 text-slate-600'
+              }`}
+            >
+              🌱 Follicular
+            </button>
+            <button
+              type="button"
+              onClick={() => setSimulatedPhaseOffset(15)}
+              title="Glow Aura (Mint & Emerald)"
+              className={`px-2.5 py-1 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
+                cycleState.phase.id === 'ovulation'
+                  ? 'bg-emerald-500 text-white shadow-sm'
+                  : 'hover:bg-emerald-100 text-slate-600'
+              }`}
+            >
+              ✨ Ovulation
+            </button>
+            <button
+              type="button"
+              onClick={() => setSimulatedPhaseOffset(22)}
+              title="Reflection Aura (Cosmic Violet)"
+              className={`px-2.5 py-1 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
+                cycleState.phase.id === 'luteal'
+                  ? 'bg-purple-600 text-white shadow-sm'
+                  : 'hover:bg-purple-100 text-slate-600'
+              }`}
+            >
+              🌙 Luteal
+            </button>
+          </div>
+        </div>
+      </header>
 
       {/* Main Content Area */}
       <main className="max-w-4xl mx-auto w-full flex-1 flex flex-col justify-center z-10 py-3">

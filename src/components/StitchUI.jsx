@@ -153,7 +153,7 @@ export function GlowButton({ children, onClick, variant = 'primary', className =
   );
 }
 
-export function ScreenNav({ currentScreen, onSelectScreen }) {
+export function ScreenNav({ currentScreen, onSelectScreen, onOpenHelp }) {
   const tabs = [
     { id: 'welcome', label: 'Aura', icon: Compass, emoji: '✨' },
     { id: 'setup', label: 'Cycle Setup', icon: Calendar, emoji: '🗓️' },
@@ -165,7 +165,7 @@ export function ScreenNav({ currentScreen, onSelectScreen }) {
   ];
 
   return (
-    <nav className="backdrop-blur-xl bg-white/70 rounded-2xl p-1.5 flex flex-wrap gap-1 sm:gap-1.5 shadow-lg border-2 border-white/80 justify-center">
+    <nav className="backdrop-blur-xl bg-white/80 rounded-2xl p-2 flex flex-wrap gap-1.5 sm:gap-2 shadow-lg border-2 border-white/90 justify-center items-center z-30">
       {tabs.map((tab) => {
         const isActive = currentScreen === tab.id;
         return (
@@ -183,6 +183,18 @@ export function ScreenNav({ currentScreen, onSelectScreen }) {
           </button>
         );
       })}
+
+      {onOpenHelp && (
+        <button
+          type="button"
+          onClick={onOpenHelp}
+          title="Emergency Resources & Help"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-black text-xs sm:text-sm bg-rose-500 hover:bg-rose-600 text-white shadow-md border border-rose-300 transition-all duration-200 cursor-pointer transform hover:scale-105 active:scale-95 animate-pulse-glow"
+        >
+          <span className="text-base">🆘</span>
+          <span>I Need Help</span>
+        </button>
+      )}
     </nav>
   );
 }
