@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Heart, RefreshCw, BookOpen, GraduationCap, BarChart2, Calendar, Compass } from 'lucide-react';
+import { Sparkles, Heart, RefreshCw, BookOpen, GraduationCap, BarChart2, Calendar, Compass, LifeBuoy, ShieldAlert } from 'lucide-react';
 import { ScreenNav } from './components/StitchUI';
 import WelcomeScreen from './components/WelcomeScreen';
 import CycleSetupScreen from './components/CycleSetupScreen';
@@ -8,6 +8,7 @@ import InsightScreen from './components/InsightScreen';
 import JournalScreen from './components/JournalScreen';
 import EducationHub from './components/EducationHub';
 import NavigateItModule from './components/NavigateItModule';
+import EmergencyHelpModal from './components/EmergencyHelpModal';
 import { calculateCycleState, PHASES } from './utils/cycleCalculations';
 
 // Initial seed entries for the standalone Journal
@@ -47,6 +48,7 @@ const INITIAL_JOURNAL_ENTRIES = [
 export default function App() {
   // STRICT: Initial state always defaults to 'welcome'
   const [currentScreen, setCurrentScreen] = useState('welcome');
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   // Cycle Configuration state (persisted in localStorage)
   const [cycleConfig, setCycleConfig] = useState(() => {
@@ -182,6 +184,12 @@ export default function App() {
     <div
       className={`min-h-screen ${activeAura.bg} transition-all duration-1000 ease-in-out flex flex-col justify-between py-6 px-4 sm:px-6 relative overflow-hidden animate-fadeIn`}
     >
+      {/* Emergency / I Need Help Modal */}
+      <EmergencyHelpModal
+        isOpen={isHelpModalOpen}
+        onClose={() => setIsHelpModalOpen(false)}
+      />
+
       {/* Dynamic Animated Ambient Blobs */}
       <div
         className={`absolute -top-32 -left-32 w-96 h-96 rounded-full ${activeAura.blob1} filter blur-3xl pointer-events-none animate-blob-1 transition-all duration-1000`}
@@ -195,33 +203,44 @@ export default function App() {
 
       {/* Top App Header & Navigation */}
       <header className="max-w-4xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-4 mb-4 z-20">
-        <button
-          type="button"
-          onClick={() => setCurrentScreen('welcome')}
-          title="Return to Welcome Landing"
-          className="flex items-center gap-3 cursor-pointer group text-left"
-        >
-          <div className="w-12 h-12 rounded-2xl bg-white/80 backdrop-blur-md shadow-md flex items-center justify-center text-2xl border-2 border-white/90 transform group-hover:scale-110 group-hover:rotate-6 transition-all sticker-badge">
-            {cycleState.phase.emoji}
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-black text-2xl sm:text-3xl text-slate-900 tracking-tight">
-                Aura Teen
-              </span>
-              <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white tracking-wide shadow-sm">
-                AESTHETIC ✨
-              </span>
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+          <button
+            type="button"
+            onClick={() => setCurrentScreen('welcome')}
+            title="Return to Welcome Landing"
+            className="flex items-center gap-3 cursor-pointer group text-left"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-white/80 backdrop-blur-md shadow-md flex items-center justify-center text-2xl border-2 border-white/90 transform group-hover:scale-110 group-hover:rotate-6 transition-all sticker-badge">
+              {cycleState.phase.emoji}
             </div>
-            <div className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
-              <span>Aura:</span>
-              <span className="font-black underline decoration-pink-400">
-                {cycleState.phase.name}
-              </span>
-              <span>(Day {cycleState.cycleDay})</span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-black text-2xl sm:text-3xl text-slate-900 tracking-tight">
+                  Aura Teen
+                </span>
+                <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white tracking-wide shadow-sm">
+                  AESTHETIC ✨
+                </span>
+              </div>
+              <div className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+                <span>Aura:</span>
+                <span className="font-black underline decoration-pink-400">
+                  {cycleState.phase.name}
+                </span>
+                <span>(Day {cycleState.cycleDay})</span>
+              </div>
             </div>
-          </div>
-        </button>
+          </button>
+
+          {/* Emergency "I Need Help" Button */}
+          <button
+            type="button"
+            onClick={() => setIsHelpModalOpen(true)}
+            className="px-3 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-black text-xs shadow-md border border-rose-300 transition-all flex items-center gap-1.5 cursor-pointer transform hover:scale-105 active:scale-95 shrink-0"
+          >
+            <span>🆘 I Need Help</span>
+          </button>
+        </div>
 
         {/* Screen Switcher */}
         <ScreenNav

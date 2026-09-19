@@ -73,16 +73,14 @@ export function calculateCycleState(startDateStr, cycleLength = 28) {
   const start = new Date(startDateStr);
   const today = new Date();
   
-  // Strip hours for clean calendar day diff
   start.setHours(0, 0, 0, 0);
   today.setHours(0, 0, 0, 0);
 
   const diffTime = today.getTime() - start.getTime();
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-  const validCycleLength = Math.max(21, Math.min(45, Number(cycleLength) || 28));
+  const validCycleLength = Math.max(18, Math.min(50, Number(cycleLength) || 28));
 
-  // Normalized day within current cycle (1 to cycleLength)
   let normalizedDay = ((diffDays % validCycleLength) + validCycleLength) % validCycleLength + 1;
 
   let phase;
@@ -112,12 +110,28 @@ export function calculateCycleState(startDateStr, cycleLength = 28) {
 }
 
 /**
- * Given a day number in cycle, return corresponding phase
+ * Red-Flag Detection and Cycle Consistency Logic
  */
-export function getPhaseForDay(dayNumber, cycleLength = 28) {
-  const normDay = ((dayNumber - 1) % cycleLength) + 1;
-  if (normDay <= 5) return PHASES.MENSTRUAL;
-  if (normDay <= 13) return PHASES.FOLLICULAR;
-  if (normDay <= 16) return PHASES.OVULATION;
-  return PHASES.LUTEAL;
+export function getRedFlagMessage(consistencyLabel) {
+  if (consistencyLabel === "Highly Variable") {
+    return "Your cycle pattern has been unusually irregular over recent months. There can be many reasons for this — consider discussing your pattern with a healthcare professional.";
+  }
+  return null;
+}
+
+export function getCycleConsistency(cycleLength, variabilityOverride = null) {
+  const length = Number(cycleLength) || 28;
+  let label = "Typical Rhythm";
+
+  if (variabilityOverride === "Highly Variable" || length < 21 || length > 40) {
+    label = "Highly Variable";
+  } else if (length < 24 || length > 35) {
+    label = "Mildly Variable";
+  }
+
+  return {
+    label,
+    redFlagMessage: getRedFlagMessage(label),
+    isRedFlag: label === "Highly Variable",
+  };
 }

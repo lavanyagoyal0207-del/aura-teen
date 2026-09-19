@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Calendar, ArrowRight, Sparkles, Clock } from 'lucide-react';
+import { Calendar, ArrowRight, Sparkles, Clock, AlertTriangle, CheckCircle2, HeartPulse } from 'lucide-react';
 import { GlassCard, PhasePillBadge, GlowButton } from './StitchUI';
-import { calculateCycleState, PHASES } from '../utils/cycleCalculations';
+import { calculateCycleState, getCycleConsistency, PHASES } from '../utils/cycleCalculations';
 
 export default function CycleSetupScreen({ cycleConfig, onSaveConfig, onProceed }) {
   const [startDate, setStartDate] = useState(cycleConfig.startDate);
   const [cycleLength, setCycleLength] = useState(cycleConfig.cycleLength || 28);
 
   const previewState = calculateCycleState(startDate, cycleLength);
+  const consistency = getCycleConsistency(cycleLength);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -61,27 +62,45 @@ export default function CycleSetupScreen({ cycleConfig, onSaveConfig, onProceed 
                 <Clock className="w-4 h-4 text-amber-500" />
                 2. Average Cycle Length
               </label>
-              <span className="px-3.5 py-1 rounded-full bg-pink-100 text-pink-800 font-black text-sm border border-pink-200 shadow-sm">
-                {cycleLength} Days
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-0.5 rounded-full text-xs font-black bg-slate-100 text-slate-700 border border-slate-200">
+                  {consistency.label}
+                </span>
+                <span className="px-3.5 py-1 rounded-full bg-pink-100 text-pink-800 font-black text-sm border border-pink-200 shadow-sm">
+                  {cycleLength} Days
+                </span>
+              </div>
             </div>
 
             <div className="flex items-center gap-4">
-              <span className="text-xs font-black text-slate-400">21d</span>
+              <span className="text-xs font-black text-slate-400">18d</span>
               <input
                 type="range"
-                min="21"
-                max="40"
+                min="18"
+                max="45"
                 value={cycleLength}
                 onChange={(e) => setCycleLength(Number(e.target.value))}
                 className="w-full h-3 bg-white/80 rounded-lg appearance-none cursor-pointer border border-slate-300"
               />
-              <span className="text-xs font-black text-slate-400">40d</span>
+              <span className="text-xs font-black text-slate-400">45d</span>
             </div>
             <p className="text-xs text-slate-500 font-bold mt-1.5">
-              Teen cycles naturally fluctuate between 24 and 35 days (default: 28).
+              Typical teen cycles range between 24 and 35 days (default: 28).
             </p>
           </div>
+
+          {/* Red-Flag Detection Notification if Highly Variable */}
+          {consistency.isRedFlag && (
+            <div className="p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 flex items-start gap-3 shadow-sm animate-fadeIn">
+              <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div className="text-xs font-bold leading-relaxed">
+                <span className="font-black block text-amber-900 uppercase tracking-wider text-[11px] mb-0.5">
+                  Cycle Pattern Note:
+                </span>
+                {consistency.redFlagMessage}
+              </div>
+            </div>
+          )}
 
           {/* Real-Time Phase Math Preview */}
           <div className="p-4 sm:p-5 rounded-2xl bg-white/70 border-2 border-white/90 shadow-sm space-y-3 backdrop-blur-md">
