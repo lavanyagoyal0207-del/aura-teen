@@ -190,17 +190,6 @@ export default function App() {
         onClose={() => setIsHelpModalOpen(false)}
       />
 
-      {/* Floating Persistent Emergency Button (Never hidden) */}
-      <div className="fixed bottom-6 right-6 z-40">
-        <button
-          type="button"
-          onClick={() => setIsHelpModalOpen(true)}
-          className="px-4 py-2.5 rounded-full bg-rose-500 hover:bg-rose-600 text-white font-black text-xs sm:text-sm shadow-2xl border-2 border-white/80 transition-all flex items-center gap-2 cursor-pointer transform hover:scale-105 active:scale-95 animate-bounce-subtle"
-        >
-          <span>🆘 I Need Help</span>
-        </button>
-      </div>
-
       {/* Dynamic Animated Ambient Blobs */}
       <div
         className={`absolute -top-32 -left-32 w-96 h-96 rounded-full ${activeAura.blob1} filter blur-3xl pointer-events-none animate-blob-1 transition-all duration-1000`}
@@ -214,8 +203,8 @@ export default function App() {
 
       {/* Top App Header & Utility Bar */}
       <header className="max-w-4xl mx-auto w-full flex flex-col gap-3.5 mb-3 z-30">
-        {/* Row 1: Brand & Top Emergency Button */}
-        <div className="flex items-center justify-between gap-3 w-full">
+        {/* Row 1: Brand Header */}
+        <div className="flex items-center justify-center sm:justify-start gap-3 w-full">
           <button
             type="button"
             onClick={() => setCurrentScreen('welcome')}
@@ -242,15 +231,6 @@ export default function App() {
                 <span>(Day {cycleState.cycleDay})</span>
               </div>
             </div>
-          </button>
-
-          {/* Top Quick Emergency Button */}
-          <button
-            type="button"
-            onClick={() => setIsHelpModalOpen(true)}
-            className="px-3.5 py-2 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-black text-xs shadow-md border-2 border-rose-300 transition-all flex items-center gap-1.5 cursor-pointer transform hover:scale-105 active:scale-95 shrink-0"
-          >
-            <span>🆘 I Need Help</span>
           </button>
         </div>
 
