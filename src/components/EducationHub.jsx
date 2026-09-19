@@ -36,8 +36,17 @@ export const pcosEducation = [
   { topic: "What to do if something feels off", content: "Track your cycle and symptoms, and bring the log to a doctor — that's the actual diagnostic step, not this app." }
 ];
 
+export const crampsReliefTips = [
+  "Apply a heating pad or warm water bottle to your lower abdomen.",
+  "Gentle stretching or light walking can ease cramping for some people.",
+  "Staying hydrated may help reduce bloating and cramping intensity.",
+  "A warm bath can help relax the muscles that cause cramping.",
+  "Deep, slow breathing can help when cramps flare up suddenly.",
+  "If pain is severe or doesn't improve, it's worth talking to a doctor — cramps that stop you from daily activities aren't something to just push through."
+];
+
 export default function EducationHub() {
-  const [activeCategory, setActiveCategory] = useState('faq'); // 'faq' | 'student' | 'pcos' | 'care'
+  const [activeCategory, setActiveCategory] = useState('faq'); // 'faq' | 'cramps' | 'student' | 'pcos' | 'care'
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedFAQ, setExpandedFAQ] = useState(null);
 
@@ -151,6 +160,17 @@ export default function EducationHub() {
           </button>
           <button
             type="button"
+            onClick={() => setActiveCategory('cramps')}
+            className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
+              activeCategory === 'cramps'
+                ? 'bg-slate-900 text-white shadow-sm scale-105'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            🍵 Cramps & Self-Care
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveCategory('student')}
             className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
               activeCategory === 'student'
@@ -258,6 +278,46 @@ export default function EducationHub() {
                 );
               })
             )}
+          </div>
+        </GlassCard>
+      )}
+
+      {/* Tab: Cramps Relief & General Self-Care */}
+      {activeCategory === 'cramps' && (
+        <GlassCard className="space-y-4 animate-fadeIn">
+          <div className="flex items-center gap-2.5 pb-3 border-b border-slate-900/10">
+            <div className="w-10 h-10 rounded-2xl bg-rose-100 border border-rose-200 flex items-center justify-center text-xl shrink-0">
+              🍵
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-black text-slate-900">
+                Cramps Relief & Comfort Tips
+              </h2>
+              <p className="text-xs font-semibold text-slate-500">
+                Gentle, research-backed everyday strategies for soothing abdominal tension
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3 pt-1">
+            {crampsReliefTips.map((tip, idx) => (
+              <div
+                key={idx}
+                className="p-4 rounded-2xl bg-white/90 border-2 border-white/80 shadow-sm flex items-start gap-3.5 hover:bg-rose-50/40 transition-colors"
+              >
+                <div className="w-7 h-7 rounded-xl bg-rose-500 text-white font-black text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                  {idx + 1}
+                </div>
+                <div className="text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                  {tip}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-2 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>Reminder: Severe pain that interferes with school or daily life warrants a checkup with a pediatrician or doctor.</span>
           </div>
         </GlassCard>
       )}

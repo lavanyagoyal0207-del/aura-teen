@@ -4,6 +4,7 @@ import { Sparkles, Send, RefreshCw, CheckCircle2, MessageSquareHeart, BookOpen, 
 import { GlassCard, PhasePillBadge, BouncyMoodSelector, SegmentedEnergyBar, GlowButton } from './StitchUI';
 import { generateDailyReflection } from '../services/geminiService';
 import { PHASES } from '../utils/cycleCalculations';
+import { crampsReliefTips } from './EducationHub';
 
 export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, onNavigateToInsights, onNavigateToGuide }) {
   const [activeTab, setActiveTab] = useState('checkin'); // 'checkin' | 'diary'
@@ -399,6 +400,17 @@ export default function DailyCheckInScreen({ cycleState, logs = [], onAddLog, on
                   className="w-full px-4 py-3 rounded-2xl bg-white/90 border-2 border-slate-900/15 focus:border-slate-900 focus:outline-none font-bold text-slate-800 placeholder-slate-400 shadow-sm text-sm"
                 />
               </div>
+
+              {/* Gentle Cramp Comfort Banner during Menstrual Phase */}
+              {cycleState.phase.id === 'menstrual' && (
+                <div className="p-3.5 rounded-2xl bg-rose-50/90 border border-rose-200 text-rose-950 flex items-start gap-2.5 text-xs font-bold shadow-xs">
+                  <span className="text-base shrink-0">🍵</span>
+                  <div>
+                    <span className="font-black text-rose-900 block mb-0.5">Cramp Comfort Tip (Menstrual Phase):</span>
+                    <span>{crampsReliefTips[0]}</span>
+                  </div>
+                </div>
+              )}
 
               {/* Primary CTA */}
               <div className="pt-2 flex flex-col sm:flex-row gap-3">
